@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset password — SolidW</title>
+    <meta name="description" content="Reset your SolidW account password securely." />
+
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/base.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+    <link rel="stylesheet" href="../../assets/css/auth.css" />
+
+    <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml" />
+
+    <script type="module" src="../../assets/js/supabaseClient.js"></script>
+    <script type="module" src="../../assets/js/toast.js"></script>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="/" class="auth-logo" aria-label="SolidW Home">
+                    <img src="../../assets/img/logo.svg" alt="SolidW" width="40" height="40" />
+                </a>
+                <h1>Reset password</h1>
+                <p>We'll send you a link to reset your password</p>
+            </div>
+
+            <form class="auth-form" id="resetForm" novalidate>
+                <div class="auth-error" id="authError" role="alert"></div>
+                <div class="auth-success" id="authSuccess" role="status"></div>
+
+                <div class="input-group">
+                    <label for="email" class="input-label">Email address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">✉</span>
+                        <input
+                            type="email"
+                            id="email"
+                            class="input-field has-icon"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-full" id="resetBtn">
+                    Send reset link
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Remember your password? <a href="../login/">Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from '../../assets/js/supabaseClient.js';
+        import { showToast } from '../../assets/js/toast.js';
+
+        const form = document.getElementById('resetForm');
+        const email = document.getElementById('email');
+        const errorEl = document.getElementById('authError');
+        const successEl = document.getElementById('authSuccess');
+        const resetBtn = document.getElementById('resetBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.classList.remove('visible');
+            errorEl.textContent = '';
+            successEl.classList.remove('visible');
+            successEl.textContent = '';
+
+            resetBtn.disabled = true;
+            resetBtn.classList.add('btn-loading');
+            resetBtn.textContent = 'Sending…';
+
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email.value.trim(), {
+                    redirectTo: window.location.origin + '/auth/reset-password/update/',
+                });
+
+                if (error) throw error;
+
+                successEl.textContent = 'Password reset link sent! Check your email.';
+                successEl.classList.add('visible');
+                showToast('Reset link sent!', { type: 'success' });
+
+                resetBtn.disabled = false;
+                resetBtn.classList.remove('btn-loading');
+                resetBtn.textContent = 'Send reset link';
+            } catch (err) {
+                errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+                errorEl.classList.add('visible');
+                resetBtn.disabled = false;
+                resetBtn.classList.remove('btn-loading');
+                resetBtn.textContent = 'Send reset link';
+            }
+        });
+    </script>
+</body>
+</html>

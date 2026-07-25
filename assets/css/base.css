@@ -1,0 +1,199 @@
+/* ========================================
+   SolidW — Base Styles
+   Reset · Typography · Root Elements
+   ======================================== */
+
+@import url('variables.css');
+
+/* ----- Reset ----- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-normal);
+  color: var(--color-text);
+  background-color: var(--color-paper);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* ----- Selection ----- */
+::selection {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+::-moz-selection {
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+/* ----- Focus ----- */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ----- Scrollbar ----- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-paper-alt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-faint);
+}
+
+/* ----- Typography ----- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-tight);
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw + 1rem, 3rem);
+  font-weight: var(--fw-bold);
+}
+
+h2 {
+  font-size: var(--fs-3xl);
+  font-weight: var(--fw-bold);
+}
+
+h3 {
+  font-size: var(--fs-2xl);
+}
+
+h4 {
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-medium);
+}
+
+h5 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+}
+
+h6 {
+  font-size: var(--fs-base);
+  font-weight: var(--fw-medium);
+}
+
+p {
+  color: var(--color-text-muted);
+  line-height: var(--lh-loose);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+a:hover {
+  color: var(--color-link-hover);
+}
+
+/* ----- Lists ----- */
+ul, ol {
+  list-style: none;
+}
+
+/* ----- Images ----- */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ----- Forms ----- */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ----- Tables ----- */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* ----- Utility ----- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
+}
+
+/* ----- Responsive Typography ----- */
+@media (max-width: 768px) {
+  h1 {
+    font-size: var(--fs-3xl);
+  }
+  h2 {
+    font-size: var(--fs-2xl);
+  }
+  h3 {
+    font-size: var(--fs-xl);
+  }
+  h4 {
+    font-size: var(--fs-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: var(--fs-2xl);
+  }
+  h2 {
+    font-size: var(--fs-xl);
+  }
+  h3 {
+    font-size: var(--fs-lg);
+  }
+}

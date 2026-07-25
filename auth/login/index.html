@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in — SolidW</title>
+    <meta name="description" content="Log in to your SolidW account to manage your business bookings and settings." />
+
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/base.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+    <link rel="stylesheet" href="../../assets/css/auth.css" />
+
+    <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml" />
+
+    <script type="module" src="../../assets/js/supabaseClient.js"></script>
+    <script type="module" src="../../assets/js/toast.js"></script>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="/" class="auth-logo" aria-label="SolidW Home">
+                    <img src="../../assets/img/logo.svg" alt="SolidW" width="40" height="40" />
+                </a>
+                <h1>Welcome back</h1>
+                <p>Log in to your SolidW account</p>
+            </div>
+
+            <form class="auth-form" id="loginForm" novalidate>
+                <div class="auth-error" id="authError" role="alert"></div>
+
+                <div class="input-group">
+                    <label for="email" class="input-label">Email address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">✉</span>
+                        <input
+                            type="email"
+                            id="email"
+                            class="input-field has-icon"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password" class="input-label">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+                        <input
+                            type="password"
+                            id="password"
+                            class="input-field has-icon"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="auth-options">
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="remember" />
+                        <span class="checkbox-box">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        <span class="checkbox-label">Remember this device for 30 days</span>
+                    </label>
+                    <a href="../reset-password/" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-full" id="loginBtn">
+                    Log in
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Don't have an account? <a href="../register/">Create one now</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from '../../assets/js/supabaseClient.js';
+        import { showToast } from '../../assets/js/toast.js';
+
+        const form = document.getElementById('loginForm');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const remember = document.getElementById('remember');
+        const errorEl = document.getElementById('authError');
+        const loginBtn = document.getElementById('loginBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.classList.remove('visible');
+            errorEl.textContent = '';
+
+            loginBtn.disabled = true;
+            loginBtn.classList.add('btn-loading');
+            loginBtn.textContent = 'Logging in…';
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email.value.trim(),
+                    password: password.value,
+                });
+
+                if (error) throw error;
+
+                showToast('Welcome back!', { type: 'success' });
+
+                // Redirect based on role
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', data.user.id)
+                    .single();
+
+                if (profile?.role === 'admin') {
+                    window.location.href = '/admin/dashboard/';
+                } else {
+                    window.location.href = '/dashboard/business/';
+                }
+            } catch (err) {
+                errorEl.textContent = err.message || 'Invalid email or password. Please try again.';
+                errorEl.classList.add('visible');
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('btn-loading');
+                loginBtn.textContent = 'Log in';
+            }
+        });
+    </script>
+</body>
+</html>

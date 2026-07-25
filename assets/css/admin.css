@@ -1,0 +1,147 @@
+/* ========================================
+   SolidW — Admin Dashboard
+   Extended dashboard styles for admin
+   ======================================== */
+
+@import url('variables.css');
+@import url('components.css');
+@import url('dashboard.css');
+
+/* ----- Admin Specific Stats ----- */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.admin-stat-card {
+  background: var(--color-white);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-gray-100);
+  box-shadow: var(--shadow-card);
+}
+
+.admin-stat-card .stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-lg);
+  background: var(--color-primary-50);
+  color: var(--color-primary-600);
+  font-size: var(--text-lg);
+  margin-bottom: var(--spacing-4);
+}
+
+.admin-stat-card .stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-medium);
+}
+
+.admin-stat-card .stat-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: var(--spacing-2);
+}
+
+/* ----- Admin Table Actions ----- */
+.admin-table-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.admin-table-actions .btn-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-gray-200);
+  background: var(--color-white);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  font-size: var(--text-base);
+}
+
+.admin-table-actions .btn-icon:hover {
+  background: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+  color: var(--color-text-primary);
+}
+
+.admin-table-actions .btn-icon.danger:hover {
+  background: var(--color-error-bg);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+/* ----- Admin Filters ----- */
+.admin-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-6);
+}
+
+.admin-filters .input-field {
+  padding: 0.5rem 0.875rem;
+  font-size: var(--text-sm);
+  min-width: 12rem;
+}
+
+.admin-filters select.input-field {
+  appearance: auto;
+  min-width: 10rem;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 1024px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-4);
+  }
+
+  .admin-stat-card {
+    padding: var(--spacing-4);
+  }
+
+  .admin-stat-card .stat-value {
+    font-size: var(--text-xl);
+  }
+
+  .admin-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filters .input-field {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .admin-table-actions {
+    gap: var(--spacing-2);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

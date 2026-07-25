@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create account — SolidW</title>
+    <meta name="description" content="Create your SolidW account and start managing your business bookings today." />
+
+    <link rel="stylesheet" href="../../assets/css/variables.css" />
+    <link rel="stylesheet" href="../../assets/css/base.css" />
+    <link rel="stylesheet" href="../../assets/css/components.css" />
+    <link rel="stylesheet" href="../../assets/css/auth.css" />
+
+    <link rel="icon" href="../../assets/img/logo.svg" type="image/svg+xml" />
+
+    <script type="module" src="../../assets/js/supabaseClient.js"></script>
+    <script type="module" src="../../assets/js/toast.js"></script>
+</head>
+<body>
+    <div class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <a href="/" class="auth-logo" aria-label="SolidW Home">
+                    <img src="../../assets/img/logo.svg" alt="SolidW" width="40" height="40" />
+                </a>
+                <h1>Create your account</h1>
+                <p>Start managing your business bookings today</p>
+            </div>
+
+            <form class="auth-form" id="registerForm" novalidate>
+                <div class="auth-error" id="authError" role="alert"></div>
+
+                <div class="input-group">
+                    <label for="name" class="input-label">Business name</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🏢</span>
+                        <input
+                            type="text"
+                            id="name"
+                            class="input-field has-icon"
+                            placeholder="Your business name"
+                            autocomplete="organization"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email" class="input-label">Email address</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">✉</span>
+                        <input
+                            type="email"
+                            id="email"
+                            class="input-field has-icon"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password" class="input-label">Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">🔒</span>
+                        <input
+                            type="password"
+                            id="password"
+                            class="input-field has-icon"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required
+                            minlength="6"
+                        />
+                    </div>
+                    <span class="input-hint">Must be at least 6 characters</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirmPassword" class="input-label">Confirm password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon" aria-hidden="true">✓</span>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            class="input-field has-icon"
+                            placeholder="Confirm your password"
+                            autocomplete="new-password"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <label class="checkbox-group">
+                    <input type="checkbox" id="terms" required />
+                    <span class="checkbox-box">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    </span>
+                    <span class="checkbox-label">
+                        By creating an account, I agree and accept the
+                        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </span>
+                </label>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-full" id="registerBtn">
+                    Create account
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="../login/">Log in</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from '../../assets/js/supabaseClient.js';
+        import { showToast } from '../../assets/js/toast.js';
+
+        const form = document.getElementById('registerForm');
+        const name = document.getElementById('name');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const terms = document.getElementById('terms');
+        const errorEl = document.getElementById('authError');
+        const registerBtn = document.getElementById('registerBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorEl.classList.remove('visible');
+            errorEl.textContent = '';
+
+            if (password.value !== confirmPassword.value) {
+                errorEl.textContent = 'Passwords do not match.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            if (password.value.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            if (!terms.checked) {
+                errorEl.textContent = 'You must agree to the Terms of Service.';
+                errorEl.classList.add('visible');
+                return;
+            }
+
+            registerBtn.disabled = true;
+            registerBtn.classList.add('btn-loading');
+            registerBtn.textContent = 'Creating account…';
+
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email.value.trim(),
+                    password: password.value,
+                    options: {
+                        data: {
+                            name: name.value.trim(),
+                        },
+                    },
+                });
+
+                if (error) throw error;
+
+                showToast('Account created successfully! Welcome to SolidW.', { type: 'success' });
+
+                // Redirect to business dashboard
+                window.location.href = '/dashboard/business/';
+            } catch (err) {
+                errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+                errorEl.classList.add('visible');
+                registerBtn.disabled = false;
+                registerBtn.classList.remove('btn-loading');
+                registerBtn.textContent = 'Create account';
+            }
+        });
+    </script>
+</body>
+</html>
